@@ -42,7 +42,7 @@ func PrintThroughputResults(config *test.TestConfig) (int, time.Duration, time.D
 	averageDuration := totalDuration / time.Duration(keyCount)
 	fmt.Println("\n--- Throughput Test Results ---")
 	fmt.Printf("Total Keys: %d\n", keyCount)
-	fmt.Printf("Total Request Count %d\n", requestCount)
+	fmt.Printf("Total Request Count %dreq\n", requestCount)
 	fmt.Printf("Total Duration: %v\n", totalDuration)
 	fmt.Printf("Average Request Duration: %v\n", averageDuration)
 	fmt.Println("--------------------------------")
