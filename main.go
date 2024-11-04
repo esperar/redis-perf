@@ -1,4 +1,4 @@
-package redisperf
+package main
 
 import (
 	"fmt"
@@ -12,6 +12,11 @@ import (
 var redisClient *redis.Client
 
 func main() {
+	http.HandleFunc("/healthredis", api.HealthCheckRedisHandler)
+
+	port := ":8080"
+	fmt.Printf("Starting server on port %s...\n", port)
+
 	config, err := redisconfig.LoadConfig()
 	if err != nil {
 		log.Fatalf("Error loading config: %v", err)
@@ -19,9 +24,5 @@ func main() {
 
 	redisClient = redisconfig.ConnectRedis(config)
 
-	http.HandleFunc("/healthredis", api.HealthCheckRedisHandler)
-
-	port := ":8080"
-	fmt.Printf("Starting server on port %s...\n", port)
 	log.Fatal(http.ListenAndServe(port, nil))
 }

@@ -1,19 +1,14 @@
 package redisconfig
 
 import (
-	"context"
 	fmt "fmt"
 	"github.com/redis/go-redis/v9"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
-	"log"
 	"path/filepath"
 )
 
-var (
-	ctx         = context.Background()
-	redisClient *redis.Client
-)
+var redisClient *redis.Client
 
 type RedisConfig struct {
 	Address         string `yaml:address`
@@ -42,10 +37,6 @@ func ConnectRedis(config *RedisConfig) *redis.Client {
 		DB:       config.DB,
 	})
 
-	_, err := client.Ping(ctx).Result()
-	if err != nil {
-		log.Fatalf("Failed to connect to Redis: %v", err)
-	}
 	fmt.Println("Connected to Redis")
 	return client
 }
