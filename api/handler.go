@@ -14,8 +14,13 @@ func OkHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleHealthCheckRedisHandler(w http.ResponseWriter, r *http.Request) {
+	err := redisGateway.Ping(r.Context())
+	if err != nil {
+		response := map[string]string{"message": "PONG Failed"}
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(response)
+	}
 	w.WriteHeader(http.StatusOK)
-	redisGateway.Ping(r.Context())
 	response := map[string]string{"message": "PONG"}
 	json.NewEncoder(w).Encode(response)
 }
