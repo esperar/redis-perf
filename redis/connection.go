@@ -1,14 +1,18 @@
 package redisconfig
 
 import (
-	fmt "fmt"
+	"context"
+	"fmt"
 	"github.com/redis/go-redis/v9"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
+	"log"
 	"path/filepath"
+	"time"
 )
 
 var redisClient *redis.Client
+var ctx = context.Background()
 
 type RedisConfig struct {
 	Address         string `yaml:address`
@@ -30,13 +34,27 @@ func LoadConfig() (*RedisConfig, error) {
 }
 
 func ConnectRedis(config *RedisConfig) *redis.Client {
-	addr := fmt.Sprintf("Redis Connection: %s", config.Address)
+	fmt.Printf("Redis Connection: %s", config.Address)
 	client := redis.NewClient(&redis.Options{
-		Addr:     addr,
+		Addr:     config.Address,
 		Password: config.Password,
 		DB:       config.DB,
 	})
 
+	_, err := client.Ping(ctx).Result()
+	if err != nil {
+		log.Fatalf("Failed to connect to Redis: %v", err)
+	}
+
 	fmt.Println("Connected to Redis")
 	return client
+}
+
+func GetRedisGateWay() *RedisGatewayImpl {
+	config, err := LoadConfig()
+	if err != nil {
+		log.Fatalf("Error loading config: %v", err)
+	}
+	redisClient = ConnectRedis(config)
+	return RedisGatewayImpl{}.New(redisClient, time.Second*5)
 }
