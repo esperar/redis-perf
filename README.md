@@ -25,9 +25,9 @@ This is a Go-based project designed to evaluate the performance, consistency, an
 
 Clone the repository and build the project:
 ```bash
-git clone https://github.com/your-repo/redis-testing-tool.git
-cd redis-testing-tool
-go build -o redis-tester main.go
+git clone https://github.com/esperar/redis-perf.git
+cd redis-perf
+make
 ```
 
 ## Configuration
@@ -47,11 +47,11 @@ test:
 
 ## Usage
 
-Each test can be executed independently or all together:
+Each test can be executed independently by using Restful API
 ```bash
-./redis-tester throughput       # Run throughput test
-./redis-tester consistency       # Run failover and consistency test
-./redis-tester ttl              # Run TTL expiration and memory management test
+GET /failover
+GET /throughput
+GET /ttl
 ```
 
 ## Example Output
