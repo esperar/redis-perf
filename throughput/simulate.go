@@ -23,7 +23,7 @@ func PrintThroughputResults(config *test.TestConfig) (int, time.Duration, time.D
 		}
 	}
 	// Measure time taken for each GET request
-	for i := 1; i <= requestCount; i++ {
+	for i := 0; i < requestCount; i++ {
 		key := fmt.Sprintf("test_key_%d", (i%keyCount)+1)
 		reqStart := time.Now()
 		_, err := redisGateway.GetData(key)
@@ -31,8 +31,8 @@ func PrintThroughputResults(config *test.TestConfig) (int, time.Duration, time.D
 		if err != nil {
 			log.Printf("Failed to get key %s: %v\n", key, err)
 		}
-		individualTimes[i-1] = reqEnd
-		fmt.Printf("Request %d for key %s completed in: %v\n", i, key, reqEnd)
+		individualTimes[(i % keyCount)] = reqEnd
+		//fmt.Printf("Request %d for key %s completed in: %v\n", i, key, reqEnd)
 	}
 	// Calculate total and average duration
 	var totalDuration time.Duration
@@ -42,6 +42,7 @@ func PrintThroughputResults(config *test.TestConfig) (int, time.Duration, time.D
 	averageDuration := totalDuration / time.Duration(keyCount)
 	fmt.Println("\n--- Throughput Test Results ---")
 	fmt.Printf("Total Keys: %d\n", keyCount)
+	fmt.Printf("Total Request Count %d\n", requestCount)
 	fmt.Printf("Total Duration: %v\n", totalDuration)
 	fmt.Printf("Average Request Duration: %v\n", averageDuration)
 	fmt.Println("--------------------------------")
