@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/redis/go-redis/v9"
 	"gopkg.in/yaml.v3"
-	"io/ioutil"
 	"log"
+	"os"
 	"path/filepath"
 	"time"
 )
@@ -15,21 +15,20 @@ var redisClient *redis.Client
 var ctx = context.Background()
 
 type RedisConfig struct {
-	Address         string `yaml:address`
-	Password        string `yaml:password`
-	DB              int    `yaml:db`
-	MaxMemoryPolicy string `yaml:maxMemoryPolicy`
+	Address         string `yaml:"address"`
+	Password        string `yaml:"password"`
+	DB              int    `yaml:"db"`
+	MaxMemoryPolicy string `yaml:"maxMemoryPolicy"`
 }
 
 func LoadConfig() (*RedisConfig, error) {
-	filename, _ := filepath.Abs("config/config.yml")
-	yamlFile, err := ioutil.ReadFile(filename)
+	filename, _ := filepath.Abs("./config.yaml")
+	yamlFile, err := os.ReadFile(filename)
 	var config RedisConfig
 	err = yaml.Unmarshal(yamlFile, &config)
 	if err != nil {
 		return nil, err
 	}
-
 	return &config, nil
 }
 

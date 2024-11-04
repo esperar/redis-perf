@@ -1,9 +1,8 @@
-redis:
-  address: "localhost:6379"
-  password: ""         # Redis password if set
-  db: 0                # Database index
-  maxMemoryPolicy: "allkeys-lru"  # Redis eviction policy for TTL tests
-test:
-  throughput: 10000       # Number of requests for throughput test
-  ttl: 5     # TTL values in seconds for keys
-  failover: true        # Enable failover testing
+address: "localhost:6379"
+password: ""         # Redis password if set
+db: 0                # Database index
+maxMemoryPolicy: "allkeys-lru"  # Redis eviction policy for TTL tests
+
+throughput: 10000       # Number of requests for throughput test
+ttl: 5     # TTL values in seconds for keys
+failover: true        # Enable failover testing
