@@ -2,42 +2,48 @@ package throughput
 
 import (
 	"fmt"
+	redisconfig "github.com/esperer/redisperf/redis"
+	"github.com/esperer/redisperf/test"
 	"log"
 	"time"
 )
 
-func PrintThroughputResults(config *Config) (int, time.Duration) {
-	requestCount := handler.Throughput
-	if requestCount <= 0 {
-		log.Println("Throughput must be greater than 0")
-		return 0, 0
+var redisGateway = redisconfig.GetRedisGateWay()
+
+func PrintThroughputResults(config *test.TestConfig) (int, time.Duration, time.Duration) {
+	requestCount := config.Throughput
+	keyCount := 30
+	individualTimes := make([]time.Duration, keyCount)
+	for i := 1; i <= keyCount; i++ {
+		key := fmt.Sprintf("test_key_%d", i)
+		value := fmt.Sprintf("value_%d", i)
+		err := redisGateway.SetData(key, value)
+		if err != nil {
+			log.Printf("Failed to set key %s: %v\n", key, err)
+		}
 	}
-
-	individualTimes := make([]time.Duration, requestCount)
-	start := time.Now()
-
-	for i := 0; i < requestCount; i++ {
+	// Measure time taken for each GET request
+	for i := 1; i <= requestCount; i++ {
+		key := fmt.Sprintf("test_key_%d", (i%keyCount)+1)
 		reqStart := time.Now()
-		// 요청 처리 모의 (간단히 100ms 대기)
-		time.Sleep(100 * time.Millisecond)
+		_, err := redisGateway.GetData(key)
 		reqEnd := time.Since(reqStart)
-
-		// 각 요청 완료 시간 저장
-		individualTimes[i] = reqEnd
-		fmt.Printf("Request %d completed in: %v\n", i+1, reqEnd)
+		if err != nil {
+			log.Printf("Failed to get key %s: %v\n", key, err)
+		}
+		individualTimes[i-1] = reqEnd
+		fmt.Printf("Request %d for key %s completed in: %v\n", i, key, reqEnd)
 	}
-
-	totalDuration := time.Since(start)
+	// Calculate total and average duration
+	var totalDuration time.Duration
+	for _, duration := range individualTimes {
+		totalDuration += duration
+	}
+	averageDuration := totalDuration / time.Duration(keyCount)
 	fmt.Println("\n--- Throughput Test Results ---")
-	fmt.Printf("Total Requests: %d\n", requestCount)
+	fmt.Printf("Total Keys: %d\n", keyCount)
 	fmt.Printf("Total Duration: %v\n", totalDuration)
-	fmt.Println("--- Individual Request Times ---")
-
-	for i, duration := range individualTimes {
-		fmt.Printf("Request %d: %v\n", i+1, duration)
-	}
+	fmt.Printf("Average Request Duration: %v\n", averageDuration)
 	fmt.Println("--------------------------------")
-
-	// 총 요청 수와 전체 소요 시간 반환
-	return requestCount, totalDuration
+	return requestCount, averageDuration, totalDuration
 }

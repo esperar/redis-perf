@@ -1,4 +1,4 @@
-package ttl
+package failover
 
 func main() {
 
