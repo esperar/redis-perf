@@ -24,3 +24,15 @@ func HandleHealthCheckRedisHandler(w http.ResponseWriter, r *http.Request) {
 	response := map[string]string{"message": "PONG"}
 	json.NewEncoder(w).Encode(response)
 }
+
+func HandleSimulateFailover(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func HandleSimulateThroughput(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func HandleSimulateTTL(w http.ResponseWriter, r *http.Request) {
+
+}

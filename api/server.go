@@ -10,8 +10,13 @@ import (
 func Run() {
 	router := mux.NewRouter()
 	router.Use(jsonContentTypeMiddleware)
+
 	router.HandleFunc("/", OkHandler).Methods("GET")
 	router.HandleFunc("/ping", HandleHealthCheckRedisHandler).Methods("GET")
+	router.HandleFunc("/failover", HandleSimulateFailover).Methods("GET")
+	router.HandleFunc("/throughput", HandleSimulateThroughput).Methods("GET")
+	router.HandleFunc("ttl", HandleSimulateTTL).Methods("GET")
+
 	fmt.Println("Server Start!! :3000")
 	log.Fatal(http.ListenAndServe(":3000", router))
 }
