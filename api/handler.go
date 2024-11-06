@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"github.com/esperer/redisperf/failover"
 	"github.com/esperer/redisperf/redis"
 	"github.com/esperer/redisperf/test"
 	"github.com/esperer/redisperf/throughput"
@@ -49,7 +50,15 @@ func HandleSimulateThroughput(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleSimulateFailover(w http.ResponseWriter, r *http.Request) {
-
+	response, err := failover.PrintFailoverTestResult()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(response)
+		log.Println(err)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(response)
 }
 
 func HandleSimulateTTL(w http.ResponseWriter, r *http.Request) {
