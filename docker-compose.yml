@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  master-1:
+    image: redis:7.0
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--cluster-enabled", "yes", "--cluster-config-file", "/data/nodes.conf", "--cluster-node-timeout", "5000", "--appendonly", "yes"]
+    volumes:
+      - master-1-data:/data
+
+  replica-1:
+    image: redis:7.0
+    ports:
+      - "6380:6379"
+    command: ["redis-server", "--slaveof", "master-1", "6379", "--appendonly", "yes"]
+    volumes:
+      - replica-1-data:/data
+
+  replica-2:
+    image: redis:7.0
+    ports:
+      - "6381:6379"
+    command: ["redis-server", "--slaveof", "master-1", "6379", "--appendonly", "yes"]
+    volumes:
+      - replica-2-data:/data
+
+  redis-sentinel:
+    image: redis:7.0
+    ports:
+      - "26379:26379"
+    command: ["redis-sentinel", "/etc/redis/sentinel.conf"]
+    volumes:
+      - ./sentinel.conf:/etc/redis/sentinel.conf
+
+volumes:
+  master-1-data:
+  replica-1-data:
+  replica-2-data:

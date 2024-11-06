@@ -30,6 +30,48 @@ cd redis-perf
 make
 ```
 
+Here’s the Redis cluster setup guide in English, formatted using Markdown:
+
+## Redis Cluster Setup Guide
+
+This guide explains how to set up a Redis cluster using Docker Compose. The cluster consists of 1 master node and 2 replica nodes.
+
+## 1. Run Docker Compose
+
+Navigate to the directory where the `docker-compose.yml` file is located in your terminal, and run the following command to start the Redis cluster:
+
+```bash
+docker-compose up -d
+```
+
+## 2. Check Cluster Status
+
+To check the status of the Redis cluster, run the following command:
+
+```bash
+docker exec -it <master_container_id> redis-cli -p 6379 cluster info
+```
+
+Replace `<master_container_id>` with the actual container ID of the master node.
+
+## 3. Check Nodes
+
+To view information about all nodes, use the following command:
+
+```bash
+docker exec -it <master_container_id> redis-cli -p 6379 cluster nodes
+```
+
+## 4. Stop the Cluster
+
+To stop the cluster, run the following command:
+
+```bash
+docker-compose down
+```
+
+This guide will help you easily set up and manage a Redis cluster.
+
 ## Configuration
 
 Set up Redis and configure as needed in `config.yaml`:
