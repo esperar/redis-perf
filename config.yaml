@@ -6,3 +6,4 @@ maxMemoryPolicy: "allkeys-lru"  # Redis eviction policy for TTL tests
 throughput: 16384       # Number of requests for throughput test
 ttl: 5     # TTL values in seconds for keys
 failover: true        # Enable failover testing
+master: "127.0.0.1:6379"

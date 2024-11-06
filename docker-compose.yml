@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  redis-master:
+    image: redis:7.0
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--cluster-enabled", "yes", "--cluster-config-file", "/data/nodes.conf", "--cluster-node-timeout", "5000", "--appendonly", "yes"]
+    volumes:
+      - redis-master-data:/data
+
+  redis-replica-1:
+    image: redis:7.0
+    ports:
+      - "6380:6379"
+    command: ["redis-server", "--slaveof", "redis-master", "6379", "--appendonly", "yes"]
+    volumes:
+      - redis-replica-1-data:/data
+
+  redis-replica-2:
+    image: redis:7.0
+    ports:
+      - "6381:6379"
+    command: ["redis-server", "--slaveof", "redis-master", "6379", "--appendonly", "yes"]
+    volumes:
+      - redis-replica-2-data:/data
+
+volumes:
+  redis-master-data:
+  redis-replica-1-data:
+  redis-replica-2-data:
