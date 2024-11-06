@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/esperer/redisperf/redis"
 	"github.com/esperer/redisperf/test"
 	"github.com/esperer/redisperf/throughput"
@@ -31,7 +30,6 @@ func HandleHealthCheckRedisHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleSimulateThroughput(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("원욱이")
 	config, err := test.LoadConfig()
 	if err != nil {
 		response := map[string]string{"message": "Throughput Test Failed Because Can'not load Test Config"}
