@@ -8,9 +8,9 @@ import (
 )
 
 type FailoverTestResult struct {
-	ExpectedCount int           `json:"expected_count"`
-	ResultCount   int           `json:"result_count"`
-	ErrorMargin   int           `json:"error_margin"`
+	ExpectedCount string        `json:"expected_count"`
+	ResultCount   string        `json:"result_count"`
+	ErrorMargin   string        `json:"error_margin"`
 	FailoverTime  time.Duration `json:"failover_time"`
 }
 
@@ -29,7 +29,6 @@ func PrintFailoverTestResult() (*FailoverTestResult, error) {
 	startTime := time.Now()
 
 	// failover 발동
-
 	time.Sleep(5 * time.Second)
 
 	// 페일오버 후 데이터 검증
@@ -44,10 +43,18 @@ func PrintFailoverTestResult() (*FailoverTestResult, error) {
 	failoverTime := time.Since(startTime)
 	errorMargin := dataCount - resultCount
 
+	fmt.Println("========== Failover Test Result ==========")
+	fmt.Println("---- Test Summary ----")
+	fmt.Printf("Expected Count : %d\n", dataCount)
+	fmt.Printf("Result Count   : %d\n", resultCount)
+	fmt.Printf("Error Margin   : %d\n", errorMargin)
+	fmt.Printf("Failover Time  : %v\n", failoverTime)
+	fmt.Println("==========================================")
+
 	result := &FailoverTestResult{
-		ExpectedCount: dataCount,
-		ResultCount:   resultCount,
-		ErrorMargin:   errorMargin,
+		ExpectedCount: strconv.Itoa(dataCount),
+		ResultCount:   strconv.Itoa(resultCount),
+		ErrorMargin:   strconv.Itoa(errorMargin),
 		FailoverTime:  failoverTime,
 	}
 
