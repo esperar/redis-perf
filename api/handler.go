@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"github.com/esperer/redisperf/failover"
+	"github.com/esperer/redisperf/pipeline"
 	"github.com/esperer/redisperf/redis"
 	"github.com/esperer/redisperf/test"
 	"github.com/esperer/redisperf/throughput"
@@ -57,6 +58,20 @@ func HandleSimulateFailover(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(response)
+}
+
+func HandlePipeline(w http.ResponseWriter, r *http.Request) {
+	config, err := test.LoadConfig()
+	if err != nil {
+		response := map[string]string{"message": "Pipeline Test Failed Because Can not load Test Config"}
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(response)
+		log.Println(err)
+		return
+	}
+	response, err := pipeline.PrintPipelineTestResult(config)
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)
 }
