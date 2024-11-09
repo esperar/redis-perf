@@ -11,6 +11,8 @@ type RedisGateway interface {
 	GetData(key string) (string, error)
 	GetKeyList() ([]string, error)
 	Ping() error
+	SetDataByPipeline(data map[string]string) error
+	GetDataByPipeline(keys []string) ([]string, error)
 }
 
 type RedisGatewayImpl struct {
@@ -81,4 +83,36 @@ func (redisGateway *RedisGatewayImpl) Ping(ctx context.Context) error {
 		return err
 	}
 	return nil
+}
+
+func (redisGateway *RedisGatewayImpl) SetDataByPipeline(data map[string]string) error {
+	ctx := context.Background()
+	pipe := redisGateway.client.Pipeline()
+
+	for key, value := range data {
+		pipe.Set(ctx, key, value, 0)
+	}
+
+	_, err := pipe.Exec(ctx)
+	return err
+}
+
+func (redisGateway *RedisGatewayImpl) GetDataByPipeline(keys []string) ([]string, error) {
+	ctx := context.Background()
+	pipe := redisGateway.client.Pipeline()
+
+	for _, key := range keys {
+		pipe.Get(ctx, key)
+	}
+
+	cmds, err := pipe.Exec(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var results []string
+	for _, cmd := range cmds {
+		results = append(results, cmd.(*redis.StringCmd).Val())
+	}
+	return results, nil
 }
